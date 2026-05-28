@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>HUB Transformación OTC</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f6f8; }
+header { background: #4679bd; color: white; padding: 10px; text-align: center; }
+header h1 { margin: 0; font-size: 24px; }
+nav { display: flex; justify-content: center; background: #315f91; }
+nav button { background: transparent; border: none; color: white; padding: 14px 20px; cursor: pointer; font-size: 16px; }
+nav button:hover { background: #1f456e; }
+.tabcontent { display: none; padding: 20px; }
+#dashboard, #filters, #formAdd { padding: 10px; margin-bottom: 10px; background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.board { display: flex; justify-content: space-around; padding: 20px 0; }
+.column { background: #e3e7eb; padding: 10px; border-radius: 10px; width: 23%; min-height: 400px; }
+.column h2 { text-align: center; margin-top: 0; }
+.card { background: white; padding: 8px; margin: 8px 0; border-radius: 8px; cursor: grab; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.card .small { font-size: 12px; color: gray; }
+.label { margin-right: 10px; }
+input, select, button { font-size: 14px; margin-right: 10px; }
+table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; }
+table, th, td { border: 1px solid #ccc; }
+th, td { padding: 8px; text-align: left; }
+th { background: #e3e7eb; }
+</style>
+</head>
+<body>
+<header><h1>HUB Transformación OTC</h1></header>
+<nav>
+  <button onclick="showTab('Executive')">Ejecutiva</button>
+  <button onclick="showTab('Kanban')">Kanban</button>
+  <button onclick="showTab('Celula')">Célula</button>
+</nav>
+<div id="Executive" class="tabcontent">
+  <h2>Vista Ejecutiva</h2>
+  <p>Placeholder para Power BI. Inserte aquí el código de incrustación de Power BI.</p>
+  <iframe id="powerbiFrame" src="" style="width:100%; height:400px; border:none; background:white;">Tu navegador no soporta iframes.</iframe>
+</div>
+<div id="Kanban" class="tabcontent">
+  <h2>Vista Kanban</h2>
+  <div id="dashboard"></div>
+  <div id="filters">
+    <label>Frente:
+      <select id="filterFront">
+        <option value="">Todos</option>
+        <option value="Recaudos">Recaudos</option>
+        <option value="Facturación">Facturación</option>
+        <option value="Mesa de Ayuda">Mesa de Ayuda</option>
+        <option value="Crédito y Cartera">Crédito y Cartera</option>
+      </select>
+    </label>
+    <label>Estado:
+      <select id="filterStatus">
+        <option value="">Todos</option>
+        <option value="Idea">Idea</option>
+        <option value="En curso">En curso</option>
+        <option value="Piloto">Piloto</option>
+        <option value="Implementado">Implementado</option>
+      </select>
+    </label>
+    <button onclick="clearFilters();">Limpiar filtros</button>
+  </div>
+  <form id="formAdd">
+    <h3>Agregar nueva iniciativa</h3>
+    <label>Nombre: <input type="text" id="nameInput" required></label>
+    <label>Frente: 
+      <select id="frontInput" required>
+        <option value="Recaudos">Recaudos</option>
+        <option value="Facturación">Facturación</option>
+        <option value="Mesa de Ayuda">Mesa de Ayuda</option>
+        <option value="Crédito y Cartera">Crédito y Cartera</option>
+      </select>
+    </label>
+    <label>Responsable: <input type="text" id="responsibleInput" required></label>
+    <label>Impacto: 
+      <select id="impactInput" required>
+        <option value="Alto">Alto</option>
+        <option value="Medio">Medio</option>
+        <option value="Bajo">Bajo</option>
+      </select>
+    </label>
+    <label>Estado: 
+      <select id="statusInput" required>
+        <option value="Idea">Idea</option>
+        <option value="En curso">En curso</option>
+        <option value="Piloto">Piloto</option>
+        <option value="Implementado">Implementado</option>
+      </select>
+    </label>
+    <button type="submit">Agregar</button>
+  </form>
+  <div class="board">
+    <div class="column" data-status="Idea" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <h2>💡 Idea</h2>
+    </div>
+    <div class="column" data-status="En curso" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <h2>⚙️ En curso</h2>
+    </div>
+    <div class="column" data-status="Piloto" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <h2>🧪 Piloto</h2>
+    </div>
+    <div class="column" data-status="Implementado" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <h2>✅ Implementado</h2>
+    </div>
+  </div>
+</div>
+<div id="Celula" class="tabcontent">
+  <h2>Vista Célula</h2>
+  <form id="backlogForm">
+    <h3>Agregar al Backlog</h3>
+    <label>Nombre: <input type="text" id="blName" required></label>
+    <label>Frente: <input type="text" id="blFront" required></label>
+    <label>Impacto: <select id="blImpact" required><option>Alto</option><option>Medio</option><option>Bajo</option></select></label>
+    <label>Esfuerzo: <select id="blEffort" required><option>Alto</option><option>Medio</option><option>Bajo</option></select></label>
+    <label>Prioridad: <input type="text" id="blPriority"></label>
+    <label>Comentario: <input type="text" id="blReason"></label>
+    <button type="submit">Agregar</button>
+  </form>
+  <table id="backlogTable">
+    <thead><tr><th>Nombre</th><th>Frente</th><th>Impacto</th><th>Esfuerzo</th><th>Prioridad</th><th>Comentario</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
+<script>
+// Tab switching
+function showTab(name) {
+  const tabs = ['Executive','Kanban','Celula'];
+  tabs.forEach(tab => {
+    document.getElementById(tab).style.display = (tab === name ? 'block' : 'none');
+  });
+}
+// show default tab
+showTab('Executive');
+
+// Data for Kanban
+let initiatives = [];
+function loadData() {
+  const stored = localStorage.getItem('initiatives');
+  if (stored) {
+    try { initiatives = JSON.parse(stored); } catch(e) { initiatives = []; }
+  }
+}
+function saveData() {
+  localStorage.setItem('initiatives', JSON.stringify(initiatives));
+}
+function renderBoard() {
+  const counts = { Idea: 0, 'En curso': 0, Piloto: 0, Implementado: 0 };
+  initiatives.forEach(item => { if (item.status in counts) counts[item.status]++; });
+  const total = initiatives.length;
+  const dash = document.getElementById('dashboard');
+  if(dash) {
+    dash.innerHTML = `<strong>Total iniciativas:</strong> ${total} &nbsp; | &nbsp; <strong>Idea:</strong> ${counts.Idea} &nbsp; | &nbsp; <strong>En curso:</strong> ${counts['En curso']} &nbsp; | &nbsp; <strong>Piloto:</strong> ${counts.Piloto} &nbsp; | &nbsp; <strong>Implementado:</strong> ${counts.Implementado}`;
+  }
+  // clear cards
+  document.querySelectorAll('.column').forEach(col => { col.querySelectorAll('.card').forEach(card => card.remove()); });
+  const filterFront = document.getElementById('filterFront').value;
+  const filterStatus = document.getElementById('filterStatus').value;
+  initiatives.forEach(item => {
+    if (filterFront && item.front !== filterFront) return;
+    if (filterStatus && item.status !== filterStatus) return;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.draggable = true;
+    card.id = item.id;
+    card.innerHTML = `${item.name} <div class="small">Frente: ${item.front} | Resp: ${item.responsible} | Impacto: ${item.impact}</div>`;
+    card.addEventListener('dragstart', drag);
+    const col = document.querySelector(`.column[data-status='${item.status}']`);
+    if (col) col.appendChild(card);
+  });
+}
+function allowDrop(ev) { ev.preventDefault(); }
+function drag(ev) { ev.dataTransfer.setData('text/plain', ev.target.id); }
+function drop(ev) {
+  ev.preventDefault();
+  const id = ev.dataTransfer.getData('text/plain');
+  const col = ev.target.closest('.column');
+  if (!col) return;
+  const status = col.getAttribute('data-status');
+  const index = initiatives.findIndex(item => item.id === id);
+  if (index > -1) {
+    initiatives[index].status = status;
+    saveData();
+    renderBoard();
+  }
+}
+// handle form
+const form = document.getElementById('formAdd');
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
+  const name = document.getElementById('nameInput').value;
+  const front = document.getElementById('frontInput').value;
+  const responsible = document.getElementById('responsibleInput').value;
+  const impact = document.getElementById('impactInput').value;
+  const status = document.getElementById('statusInput').value;
+  const id = 'id-' + Date.now() + '-' + Math.random().toString(36).substr(2,9);
+  initiatives.push({ id, name, front, responsible, impact, status });
+  saveData();
+  renderBoard();
+  form.reset();
+});
+document.getElementById('filterFront').addEventListener('change', renderBoard);
+document.getElementById('filterStatus').addEventListener('change', renderBoard);
+function clearFilters() {
+  document.getElementById('filterFront').value = '';
+  document.getElementById('filterStatus').value = '';
+  renderBoard();
+}
+loadData();
+renderBoard();
+
+// Backlog
+let backlog = [];
+function loadBacklog() {
+  const stored = localStorage.getItem('backlog');
+  if (stored) {
+    try { backlog = JSON.parse(stored); } catch(e) { backlog = []; }
+  }
+}
+function saveBacklog() {
+  localStorage.setItem('backlog', JSON.stringify(backlog));
+}
+function renderBacklog() {
+  const tbody = document.querySelector('#backlogTable tbody');
+  tbody.innerHTML = '';
+  backlog.forEach(item => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${item.name}</td><td>${item.front}</td><td>${item.impact}</td><td>${item.effort}</td><td>${item.priority}</td><td>${item.reason}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+document.getElementById('backlogForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const name = document.getElementById('blName').value;
+  const front = document.getElementById('blFront').value;
+  const impact = document.getElementById('blImpact').value;
+  const effort = document.getElementById('blEffort').value;
+  const priority = document.getElementById('blPriority').value;
+  const reason = document.getElementById('blReason').value;
+  backlog.push({ name, front, impact, effort, priority, reason });
+  saveBacklog();
+  renderBacklog();
+  document.getElementById('backlogForm').reset();
+});
+loadBacklog();
+renderBacklog();
+</script>
+</body>
+</html>
